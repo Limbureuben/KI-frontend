@@ -1,0 +1,47 @@
+<div class="notifications-container">
+  <!-- Close Button -->
+
+  <h2 class="page-title">Notifications</h2>
+
+  <!-- Loading State -->
+  <div *ngIf="loading" class="loading">
+    <div class="spinner"></div>
+    <p>Loading notifications...</p>
+  </div>
+
+  <!-- Error State -->
+  <div *ngIf="error" class="error">
+    {{ error }}
+  </div>
+
+  <!-- Notifications List -->
+  <div *ngIf="!loading && !error && notifications.length > 0">
+    <div
+      class="notification-card"
+      *ngFor="let notif of notifications; trackBy: trackByNotificationId"
+    >
+      <div class="notif-header">
+        <span class="status-badge" [ngClass]="getNotificationStatus(notif)">
+          {{ getNotificationStatusText(notif) }}
+        </span>
+        <span class="notif-time">
+          {{ notif.created_at | date: 'short' }}
+        </span>
+      </div>
+
+      <div class="notif-body">
+        <h3 class="notif-title">Report #{{ notif.report_id }}</h3>
+        <p class="notif-message">{{ notif.message }}</p>
+      </div>
+
+      <div class="notif-footer">
+        <span class="replied-by">👤 {{ notif.replied_by || 'Admin' }}</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Empty State -->
+  <div *ngIf="!loading && !error && notifications.length === 0" class="empty">
+    <p>No notifications available</p>
+  </div>
+</div>
