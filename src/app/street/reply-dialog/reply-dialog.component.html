@@ -1,28 +1,40 @@
-<div class="p-4 max-w-md mx-auto">
+<div class="reply-dialog-container">
 
-  <mat-dialog-content class="mt-4">
-    <form [formGroup]="replyForm">
-      <mat-form-field appearance="outline" class="w-full">
+  <h2 class="dialog-title">Reply to Report</h2>
+
+  <mat-dialog-content>
+    <form [formGroup]="replyForm" class="form-area">
+
+      <mat-form-field appearance="outline" class="full-width">
         <mat-label>Message</mat-label>
         <textarea
           matInput
+          rows="5"
           formControlName="message"
-          rows="4"
-          placeholder="Write your reply to the reporter here..."
-          class="resize-none">
-        </textarea>
+          placeholder="Write your reply to the reporter..."
+        ></textarea>
       </mat-form-field>
+
     </form>
   </mat-dialog-content>
 
-  <mat-dialog-actions align="end" class="mt-4">
-    <button mat-stroked-button color="warn" (click)="dialogRef.close()">Cancel</button>
-    <button mat-raised-button
-            color="primary"
-            (click)="submitReply()"
-            [disabled]="replyForm.invalid"
-            [ngStyle]="{ 'background-color': 'rgb(100, 100, 177)', 'color': '#fff' }">
+  <mat-dialog-actions align="end" class="dialog-actions">
+    <button
+      mat-stroked-button
+      color="warn"
+      class="cancel-btn"
+      (click)="dialogRef.close()">
+      Cancel
+    </button>
+
+    <button
+      mat-raised-button
+      color="primary"
+      class="send-btn"
+      [disabled]="replyForm.invalid"
+      (click)="submitReply()">
       Send
     </button>
   </mat-dialog-actions>
 </div>
+

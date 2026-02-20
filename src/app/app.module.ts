@@ -27,7 +27,6 @@ import { EffectsModule } from '@ngrx/effects';
 import { OpenspaceService } from './service/openspace.service';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatSortModule } from '@angular/material/sort';
-import { provideFirebaseApp, initializeApp } from '@angular/fire/app';
 import { provideAuth, getAuth } from '@angular/fire/auth';
 import { provideFirestore, getFirestore } from '@angular/fire/firestore';
 import { environment } from '../environments/environment';
@@ -94,7 +93,6 @@ export function HttpLoaderFactory(http: HttpClient) {
     provideAnimations(),
     provideHttpClient(withFetch()),
     OpenspaceService,
-    provideFirebaseApp(() => initializeApp(environment.firebase)),
     provideAuth(() => getAuth()),
     provideFirestore(() => getFirestore()),
     { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true }

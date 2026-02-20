@@ -26,12 +26,18 @@ export class ReplyDialogComponent {
     });
   }
 
-  submitReply(): void {
+   submitReply(): void {
     if (this.replyForm.invalid) return;
 
-    const message = this.replyForm.value.message;
-    const reportId = this.data.report?.id || this.data.report?.report_id;
-    // const reportId = this.data.report.id; // use numeric ID
+    const message = this.replyForm.value.message?.trim();
+    if (!message) return;
+
+    const reportId = this.data?.report?.id ?? this.data?.report?.report_id;
+
+    if (!reportId) {
+      this.snackBar.open('Invalid report ID', 'Close', { duration: 3000 });
+      return;
+    }
 
     this.reportService.replyToReport(reportId, message).subscribe({
       next: () => {
@@ -44,6 +50,7 @@ export class ReplyDialogComponent {
       }
     });
   }
+   
 
   onCancel(): void {
     this.dialogRef.close();

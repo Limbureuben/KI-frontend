@@ -1,6 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Inject, Injectable, NgZone, PLATFORM_ID } from '@angular/core';
 import { Observable } from 'rxjs';
+import { environment } from '../../environments/environment';
 
 export interface Notification {
   id: number;
@@ -15,11 +16,10 @@ export interface Notification {
   providedIn: 'root'
 })
 export class NotificationServiceService {
-  private apiUrl = 'http://localhost:8000/api/v1/notifications/';
-
+  private baseUrl = `${environment.apiUrl}/v1/notifications/`;
   constructor(private http: HttpClient) {}
 
   getNotifications(): Observable<Notification[]> {
-    return this.http.get<Notification[]>(this.apiUrl);
+    return this.http.get<Notification[]>(this.baseUrl);
   }
 }

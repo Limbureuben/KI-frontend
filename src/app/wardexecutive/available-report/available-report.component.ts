@@ -6,9 +6,11 @@ import { MatTableDataSource } from '@angular/material/table';
 import { BookingService } from '../../service/booking.service';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { OpenspaceService } from '../../service/openspace.service';
 import { ToastrService } from 'ngx-toastr';
 import Swal from 'sweetalert2';
 import { WardReplayComponent } from '../ward-replay/ward-replay.component';
+import { WardDialogComponent } from '../ward-dialog/ward-dialog.component';
 
 @Component({
   selector: 'app-available-report',
@@ -46,7 +48,7 @@ import { WardReplayComponent } from '../ward-replay/ward-replay.component';
 })
 export class AvailableReportComponent   implements OnInit{
     dataSource = new MatTableDataSource<any>([]);
-  displayedColumns: string[] = ['report_id','space_name','street','message', 'status', 'actions'];
+  displayedColumns: string[] = ['report_id','space_name','street', 'actions'];
   // displayedColumns: string[] = ['space', 'username', 'contact', 'date', 'duration', 'purpose', 'district', 'file', 'actions'];
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
@@ -54,14 +56,15 @@ export class AvailableReportComponent   implements OnInit{
 
   selectedReport: any = null;
   showPopup: boolean = false;
-  backendUrl = 'http://localhost:8000';
+  backendUrl = 'http://95.111.247.129:8099';
   isLoading: boolean = false;
 
   constructor(
     private bookingService: BookingService,
     private dialog: MatDialog,
     private toastr: ToastrService,
-    private snackBar: MatSnackBar
+    private snackBar: MatSnackBar,
+    private reportService: OpenspaceService
   ) {}
 
 
@@ -104,13 +107,6 @@ loadForwardedReport() {
       if (!filePath) return '';
       return `${this.backendUrl}${filePath}`;
   }
-
-
-  confirmReport(reportId: number): void {
-    console.log('Confirming booking:', reportId);
-  }
-
-
 
   forwardReport(forwardedReport: any): void {
   console.log('Forward report called with data:', forwardedReport);
@@ -226,6 +222,74 @@ private performForwardReport(forwardId: number, message: string = ''): void {
     }
   });
 }
+
+confirmReport(reportId: string): void {
+    // Create the SweetAlert with Bootstrap buttons
+    const swalWithBootstrapButtons = Swal.mixin({
+      customClass: {
+        confirmButton: "btn btn-success",
+        cancelButton: "btn btn-danger"
+      },
+      buttonsStyling: false
+    });
+
+    // Show SweetAlert with confirmation buttons
+    swalWithBootstrapButtons.fire({
+      title: "Are you sure?",
+      text: "You won't be able to revert this!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonText: "Yes, confirm it!",
+      cancelButtonText: "No, cancel!",
+      reverseButtons: true
+    }).then((result) => {
+      if (result.isConfirmed) {
+        // Proceed with the mutation to confirm the report
+        this.reportService.confirmReport(reportId).subscribe(response => {
+          if (response.data.confirmReport.success) {
+            // Show success message with SweetAlert
+            swalWithBootstrapButtons.fire({
+              title: "Confirmed!",
+              text: "The report has been confirmed.",
+              icon: "success"
+            });
+            // Optionally, reload the report list or update the UI
+            this.loadForwardedReport();
+          } else {
+            // Show failure message with SweetAlert
+            swalWithBootstrapButtons.fire({
+              title: "Failed!",
+              text: "The report could not be confirmed.",
+              icon: "error"
+            });
+          }
+        }, error => {
+          // Show error message with SweetAlert in case of backend error
+          swalWithBootstrapButtons.fire({
+            title: "Error!",
+            text: "There was an error confirming the report.",
+            icon: "error"
+          });
+        });
+      } else if (result.dismiss === Swal.DismissReason.cancel) {
+        // Show cancellation message with SweetAlert
+        swalWithBootstrapButtons.fire({
+          title: "Cancelled",
+          text: "The report has not been confirmed.",
+          icon: "error"
+        });
+      }
+    });
+  }
+
+
+viewReportDetails(report: any) {
+     const normalized = report.report ? report.report : report;
+      this.dialog.open(WardDialogComponent, {
+        width: '500px',
+        data: normalized
+      });
+    }
 
 
 }

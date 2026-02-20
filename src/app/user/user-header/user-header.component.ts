@@ -19,6 +19,7 @@ export class UserHeaderComponent implements OnInit{
   isDarkTheme = false;
   isAuthenticated = false;
   isAnonymous: boolean = false;
+  menuOpen = false;
 
   constructor(
     private themeService: ThemeService,
@@ -129,4 +130,9 @@ export class UserHeaderComponent implements OnInit{
     this.router.navigate(['/user-home']);
   }, 1500);
   }
+
+toggleMenu() {
+  this.menuOpen = !this.menuOpen;
+}
+
 }

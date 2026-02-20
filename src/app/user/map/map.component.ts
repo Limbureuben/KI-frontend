@@ -205,32 +205,17 @@ addMarkersToMap(): void {
           this.map?.on('click', sourceId, (e) => {
             const popupContent = document.createElement('div');
             popupContent.innerHTML = `
-            <div style="
-              font-family: sans-serif;
-              padding: 4px 6px;
-              font-size: 14px;
-              color: #333;
-              max-width: 240px;
-            ">
-              <div><strong>Name:</strong> ${space.name}</div>
-              <div><strong>Kata:</strong> ${space.district}</div>
-              <div><strong>Mtaa:</strong> ${space.street}</div>
-
-              <div style="margin-top: 8px;">
-                <button id="report-btn-${space.id}" style="
-                  background-color: #1976d2;
-                  color: #fff;
-                  border: none;
-                  padding: 5px 12px;
-                  font-size: 13px;
-                  border-radius: 3px;
-                  cursor: pointer;
-                " onmouseover="this.style.backgroundColor='#155fa0'" onmouseout="this.style.backgroundColor='#1976d2'">
-                  Report
-                </button>
-              </div>
-            </div>
-          `;
+  <div class="popup-content">
+    <div><strong>Name:</strong> ${space.name}</div>
+    <div><strong>Kata:</strong> ${space.district}</div>
+    <div><strong>Mtaa:</strong> ${space.street}</div>
+    <div class="popup-actions">
+      <button id="report-btn-${space.id}" class="popup-report-btn">Report</button>
+    </div>
+  </div>
+`;
+	
+          
             const popup = new Popup({ closeOnClick: true })
               .setLngLat([space.longitude, space.latitude])
               .setDOMContent(popupContent)
@@ -479,13 +464,18 @@ submitReport(): void {
 
 
 confirmSubmission(): void {
-  console.log('Confirm clicked');
-  const startTime = Date.now();
+  if (this.reportForm.invalid) {
+    Object.keys(this.reportForm.controls).forEach(key => {
+      this.reportForm.get(key)?.markAsTouched();
+    });
+    return;
+  }
 
-  const userId = localStorage.getItem('userId');
+  this.closeForm();
+  this.showConfirmationModal = true;
   this.submitting = true;
-  this.success = false;
   this.errorMessage = '';
+  this.success = false;
 
   const formData = new FormData();
   formData.append('description', this.reportForm.get('description')?.value);
@@ -495,31 +485,24 @@ confirmSubmission(): void {
   formData.append('street', this.selectedSpace.street || '');
   formData.append('latitude', this.selectedSpace.latitude?.toString() || '');
   formData.append('longitude', this.selectedSpace.longitude?.toString() || '');
-  if (userId) {
-    formData.append('user_id', userId);
-  }
 
-  // Optional file
   if (this.selectedFile) {
     formData.append('file', this.selectedFile, this.selectedFile.name);
   }
 
-  console.log('Submitting report via REST with FormData:', formData);
+  console.log('Submitting report FormData:', formData);
 
   this.openSpaceService.submitReportREST(formData).subscribe({
     next: (response) => {
-      console.log('Report created successfully in', Date.now() - startTime, 'ms');
+      console.log('Report submitted successfully:', response);
       this.submitting = false;
       this.success = true;
       this.reportId = response.reportId;
 
       Swal.fire({
         title: `Report ID ${this.reportId} submitted successfully!`,
-        icon: "success",
-        customClass: {
-          title: 'custom-title',
-          popup: 'custom-popup'
-        }
+        icon: 'success',
+        customClass: { title: 'custom-title', popup: 'custom-popup' }
       });
 
       this.showConfirmationModal = false;
@@ -532,14 +515,10 @@ confirmSubmission(): void {
       console.error('Error submitting report:', error);
       this.submitting = false;
       this.errorMessage = 'Failed to submit report. Please try again.';
-      this.toastr.error('Error submitting report', 'Error', {
-        positionClass: 'toast-top-right',
-      });
+      this.toastr.error('Error submitting report', 'Error', { positionClass: 'toast-top-right' });
     }
   });
 }
-
-
 
 cancelSubmission(): void {
   this.showConfirmationModal = false;

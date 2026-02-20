@@ -100,13 +100,12 @@
         <ng-container matColumnDef="reportId">
           <th mat-header-cell *matHeaderCellDef mat-sort-header>
             <div class="header-cell">
-              <mat-icon>tag</mat-icon>
               <span>Report ID</span>
             </div>
           </th>
           <td mat-cell *matCellDef="let report">
             <div class="cell-content">
-              <div class="primary-text">#{{ report.reportId }}</div>
+              <div class="primary-text">{{ report.reportId }}</div>
               <div class="secondary-text">Historical Record</div>
             </div>
           </td>
@@ -141,7 +140,7 @@
           <th mat-header-cell *matHeaderCellDef mat-sort-header>
             <div class="header-cell">
               <mat-icon>schedule</mat-icon>
-              <span>Completion Date</span>
+              <span> Date</span>
             </div>
           </th>
           <td mat-cell *matCellDef="let report">
@@ -149,9 +148,6 @@
               <div class="date-info">
                 <div class="primary-text">{{ formatDate(report.createdAt) }}</div>
                 <div class="secondary-text">{{ getTimeAgo(report.createdAt) }}</div>
-              </div>
-              <div class="date-icon">
-                <mat-icon>event</mat-icon>
               </div>
             </div>
           </td>
@@ -188,47 +184,6 @@
                       title="View Details">
                 <mat-icon>visibility</mat-icon>
               </button>
-
-              <button mat-icon-button
-                      class="action-btn download-btn"
-                      (click)="downloadReport(report); $event.stopPropagation()"
-                      title="Download Report">
-                <mat-icon>download</mat-icon>
-              </button>
-
-              <button mat-icon-button
-                      class="action-btn share-btn"
-                      title="Share Report">
-                <mat-icon>share</mat-icon>
-              </button>
-
-              <button mat-icon-button
-                      class="action-btn more-btn"
-                      [matMenuTriggerFor]="historyMenu"
-                      title="More Options">
-                <mat-icon>more_vert</mat-icon>
-              </button>
-
-              <!-- History Menu -->
-              <mat-menu #historyMenu="matMenu">
-                <button mat-menu-item (click)="viewTimeline(report)">
-                  <mat-icon>timeline</mat-icon>
-                  <span>View Timeline</span>
-                </button>
-                <button mat-menu-item (click)="duplicateReport(report)">
-                  <mat-icon>content_copy</mat-icon>
-                  <span>Duplicate Report</span>
-                </button>
-                <button mat-menu-item (click)="exportToPDF(report)">
-                  <mat-icon>picture_as_pdf</mat-icon>
-                  <span>Export to PDF</span>
-                </button>
-                <mat-divider></mat-divider>
-                <button mat-menu-item (click)="archiveReport(report)" class="archive-action">
-                  <mat-icon>archive</mat-icon>
-                  <span>Archive Report</span>
-                </button>
-              </mat-menu>
             </div>
           </td>
         </ng-container>

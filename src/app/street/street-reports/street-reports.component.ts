@@ -48,14 +48,14 @@ import { ReplyDialogComponent } from '../reply-dialog/reply-dialog.component';
 })
 export class StreetReportsComponent {
    dataSource = new MatTableDataSource<any>([]);
-  displayedColumns: string[] = ['space_name', 'district', 'street', 'created_at', 'actions'];
+  displayedColumns: string[] = ['report_id','space_name', 'district', 'street', 'created_at', 'actions'];
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
 
   selectedReport: any = null;
   showPopup: boolean = false;
-  backendUrl = 'http://localhost:8000';
+  backendUrl = 'http://95.111.247.129:8099';
   isLoading: boolean = false;
 
   constructor(
@@ -102,25 +102,66 @@ export class StreetReportsComponent {
   getFullFileUrl(filePath: string): string {
       if (!filePath) return '';
       return `${this.backendUrl}${filePath}`;
-  }
+}
 
 
-  confirmReport(reportId: number): void {
-    console.log('Confirming booking:', reportId);
+
+forwardReport(row: any): void {
+
+  // Extra safety: prevent double forward
+  if (row.forwarded_to_admin) {
+    return;
   }
 
-forwardReport(row: any) {
-    this.reportService.forwardReportToWard(row.id).subscribe({
-      next: (res) => {
-        this.snackBar.open(res.message || 'Report forwarded', 'Close', { duration: 3000 });
-        // Mark as forwarded to disable button
-        row.forwarded_to_admin = true;
-      },
-      error: (err) => {
-        this.snackBar.open(err.error?.error || 'Failed to forward report', 'Close', { duration: 4000 });
-      }
-    });
-  }
+  const swalWithBootstrapButtons = Swal.mixin({
+    customClass: {
+      confirmButton: 'btn btn-success',
+      cancelButton: 'btn btn-danger'
+    },
+    buttonsStyling: false
+  });
+
+  swalWithBootstrapButtons.fire({
+    title: 'Are you sure?',
+    text: 'Do you want to forward this report to the Ward Executive?',
+    icon: 'warning',
+    showCancelButton: true,
+    confirmButtonText: 'Yes, forward it!',
+    cancelButtonText: 'No, cancel',
+    reverseButtons: true
+  }).then((result) => {
+
+    if (result.isConfirmed) {
+
+      // ✅ Disable both Forward and Confirm immediately
+      row.forwarded_to_admin = true;
+
+      // Make UI reflect disabled state for Confirm button as well
+      // (assuming you added [disabled]="row.forwarded_to_admin" to Confirm button)
+      
+      this.reportService.forwardReportToWard(row.id).subscribe({
+        next: (res) => {
+          swalWithBootstrapButtons.fire(
+            'Forwarded!',
+            res.message || 'Report forwarded to Ward Executive.',
+            'success'
+          );
+        },
+        error: (err) => {
+          // Re-enable both buttons if forwarding fails
+          row.forwarded_to_admin = false;
+
+          swalWithBootstrapButtons.fire(
+            'Failed!',
+            err.error?.error || 'Failed to forward report.',
+            'error'
+          );
+        }
+      });
+    }
+
+  });
+}
 
 
 private performForwardReport(forwardId: number, message: string = ''): void {
@@ -198,5 +239,64 @@ viewReportDetails(report: any) {
     }
   });
 }
+
+confirmReport(reportId: string): void {
+    // Create the SweetAlert with Bootstrap buttons
+    const swalWithBootstrapButtons = Swal.mixin({
+      customClass: {
+        confirmButton: "btn btn-success",
+        cancelButton: "btn btn-danger"
+      },
+      buttonsStyling: false
+    });
+
+    // Show SweetAlert with confirmation buttons
+    swalWithBootstrapButtons.fire({
+      title: "Are you sure?",
+      text: "You won't be able to revert this!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonText: "Yes, confirm it!",
+      cancelButtonText: "No, cancel!",
+      reverseButtons: true
+    }).then((result) => {
+      if (result.isConfirmed) {
+        // Proceed with the mutation to confirm the report
+        this.reportService.confirmReport(reportId).subscribe(response => {
+          if (response.data.confirmReport.success) {
+            // Show success message with SweetAlert
+            swalWithBootstrapButtons.fire({
+              title: "Confirmed!",
+              text: "The report has been confirmed.",
+              icon: "success"
+            });
+            // Optionally, reload the report list or update the UI
+            this.loadStreetReports();
+          } else {
+            // Show failure message with SweetAlert
+            swalWithBootstrapButtons.fire({
+              title: "Failed!",
+              text: "The report could not be confirmed.",
+              icon: "error"
+            });
+          }
+        }, error => {
+          // Show error message with SweetAlert in case of backend error
+          swalWithBootstrapButtons.fire({
+            title: "Error!",
+            text: "There was an error confirming the report.",
+            icon: "error"
+          });
+        });
+      } else if (result.dismiss === Swal.DismissReason.cancel) {
+        // Show cancellation message with SweetAlert
+        swalWithBootstrapButtons.fire({
+          title: "Cancelled",
+          text: "The report has not been confirmed.",
+          icon: "error"
+        });
+      }
+    });
+  }
 
 }

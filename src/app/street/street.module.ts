@@ -29,6 +29,7 @@ import { ReportDialogComponent } from './report-dialog/report-dialog.component';
 import { StreetDirectionComponent } from './street-direction/street-direction.component'
 import { TrustedUrlPipe } from '../pipes/pipes/trusted-url.pipe';
 import { ReplyDialogComponent } from './reply-dialog/reply-dialog.component';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
 
 @NgModule({
@@ -65,6 +66,7 @@ import { ReplyDialogComponent } from './reply-dialog/reply-dialog.component';
     ReactiveFormsModule,
     MatSelectModule,
     MatOptionModule,
+    MatTooltipModule,
     MatTableModule,
   ]
 })

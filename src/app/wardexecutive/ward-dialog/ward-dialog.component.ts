@@ -1,39 +1,20 @@
 import { Component, Inject } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
-import { StreetDirectionComponent } from '../street-direction/street-direction.component';
-import { animate, state, style, transition, trigger } from '@angular/animations';
+import { WardmapDirectionComponent } from '../wardmap-direction/wardmap-direction.component';
 
 @Component({
-  selector: 'app-report-dialog',
+  selector: 'app-ward-dialog',
   standalone: false,
-  templateUrl: './report-dialog.component.html',
-  styleUrl: './report-dialog.component.scss',
-  animations: [
-    trigger('fadeScale', [
-      state('void', style({ opacity: 0, transform: 'scale(0.9)' })),
-      transition(':enter', [
-        animate('250ms ease-out', style({ opacity: 1, transform: 'scale(1)' })),
-      ]),
-      transition(':leave', [
-        animate('200ms ease-in', style({ opacity: 0, transform: 'scale(0.9)' })),
-      ]),
-    ]),
-    trigger('fadeInOut', [
-      state('void', style({ opacity: 0 })),
-      transition(':enter', [animate('200ms ease-in', style({ opacity: 1 }))]),
-      transition(':leave', [animate('150ms ease-out', style({ opacity: 0 }))]),
-    ]),
-  ],
+  templateUrl: './ward-dialog.component.html',
+  styleUrl: './ward-dialog.component.scss'
 })
-export class ReportDialogComponent {
-
-
-  isMediaModalOpen = false;
+export class WardDialogComponent {
+isMediaModalOpen = false;
   selectedMedia: string = '';
   isVideo: boolean = false;
 
   constructor(
-    public dialogRef: MatDialogRef<ReportDialogComponent>,
+    public dialogRef: MatDialogRef<WardDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any,
     private dialog: MatDialog,
   ) {
@@ -78,7 +59,7 @@ export class ReportDialogComponent {
 
     openMapDirections(lat: number, lng: number): void {
       const mapUrl = `https://www.google.com/maps?q=${lat},${lng}&output=embed`;
-      this.dialog.open(StreetDirectionComponent, {
+      this.dialog.open(WardmapDirectionComponent, {
         width: '600px',
         data: { mapUrl }
       });
@@ -87,4 +68,5 @@ export class ReportDialogComponent {
       closeForm(): void {
         this.dialogRef.close();
       }
+
 }

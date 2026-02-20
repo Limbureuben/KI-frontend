@@ -154,6 +154,7 @@ export class ReportUssdComponent implements OnInit {
     });
   }
 
+
   deleteReport(report: any) {
   Swal.fire({
     title: 'Are you sure?',
@@ -264,3 +265,4 @@ export class ReportUssdComponent implements OnInit {
   }
 
 }
+

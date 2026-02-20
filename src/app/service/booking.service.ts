@@ -5,12 +5,14 @@ import { RegisterData, User } from '../models/openspace.model';
 import { Apollo } from 'apollo-angular';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Token } from 'graphql';
+import { environment } from '../../environments/environment';
+
 
 @Injectable({
   providedIn: 'root'
 })
 export class BookingService {
-  private resetUrl = 'http://localhost:8000';
+  private resetUrl = environment.apiUrl;
 
   constructor(
     private apollo: Apollo,
@@ -40,14 +42,14 @@ export class BookingService {
     getAllStreetLeaders(): Observable<User[]> {
       const token = localStorage.getItem('token');
       const headers = new HttpHeaders().set('Authorization', `Bearer ${token || ''}`);
-      return this.http.get<User[]>(`${this.resetUrl}/api/v1/street-leaders/`, { headers });
+      return this.http.get<User[]>(`${this.resetUrl}/v1/street-leaders/`, { headers });
     }
 
 
     bookOpenSpace(data: FormData): Observable<any> {
       const token = localStorage.getItem('token');
       const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);
-      return this.http.post(`${this.resetUrl}/api/v1/book-open-space/`, data, { headers });
+      return this.http.post(`${this.resetUrl}/v1/book-open-space/`, data, { headers });
     }
 
     getAllBookings() {
@@ -67,13 +69,19 @@ export class BookingService {
   getBookingsByDistrict(): Observable<any> {
     const token = localStorage.getItem('token');
     const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);
-    return this.http.get(`${this.resetUrl}/api/v1/district-bookings/`, { headers });
+    return this.http.get(`${this.resetUrl}/v1/district-bookings/`, { headers });
+  }
+
+ WardreplyToReport(reportId: number, message: string): Observable<any> {
+    const token = localStorage.getItem('token');
+    const headers = new HttpHeaders({ Authorization: `Bearer ${token}` });
+    return this.http.post(`${this.resetUrl}/v1/reports/${reportId}/reply/`, { message }, { headers });
   }
 
   getReportsByDistrict(): Observable<any> {
     const token = localStorage.getItem('token');
     const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);
-    return this.http.get(`${this.resetUrl}/api/v1/reports/forwarded/`, { headers });
+    return this.http.get(`${this.resetUrl}/v1/reports/forwarded/`, { headers });
   }
 
 
@@ -82,7 +90,7 @@ export class BookingService {
     const headers = new HttpHeaders({
       Authorization: `Bearer ${token}`
     });
-    return this.http.get<Report[]>(`${this.resetUrl}/api/v1/street-reports/`, { headers });
+    return this.http.get<Report[]>(`${this.resetUrl}/v1/street-reports/`, { headers });
   }
 
 
@@ -92,82 +100,89 @@ export class BookingService {
     const headers = new HttpHeaders({
       Authorization: `Bearer ${token}`
     });
-    return this.http.get<Report[]>(`${this.resetUrl}/api/v1/street-reports/`, { headers });
+    return this.http.get<Report[]>(`${this.resetUrl}/v1/street-reports/`, { headers });
   }
 
   acceptBooking(bookingId: number, description: string): Observable<any> {
   const payload = { description };
-  const url = `http://localhost:8000/api/v1/accept-and-forward-booking/${bookingId}/`;
+  const url = `http://localhost:8000/v1/accept-and-forward-booking/${bookingId}/`;
   return this.http.post(url, payload);
 }
 
 getAdminBookingsByDistrict(): Observable<any> {
    const token = localStorage.getItem('token');
    const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);
-     return this.http.get(`${this.resetUrl}/api/v1/allbooking/`, { headers });
+     return this.http.get(`${this.resetUrl}/v1/allbooking/`, { headers });
 }
 
   rejectBooking(bookingId: number): Observable<any> {
-      const url = `${this.resetUrl}/api/v1/bookings/${bookingId}/reject/`;
+      const url = `${this.resetUrl}/v1/bookings/${bookingId}/reject/`;
       return this.http.post(url, {}); // POST with empty body
     }
 
   getAllMyBookings(): Observable<any> {
-    return this.http.get(`${this.resetUrl}/api/v1/my-bookings/`);
+    return this.http.get(`${this.resetUrl}/v1/my-bookings/`);
   }
 
   getAllMyHistoryBooking(): Observable<any> {
-    return this.http.get(`${this.resetUrl}/api/v1/my-bookings`);
+    return this.http.get(`${this.resetUrl}/v1/my-bookings`);
   }
   
-  replyToReport(reportId: number, message: string): Observable<any> {
+   replyToReport(reportId: number, message: string): Observable<any> {
     const token = localStorage.getItem('token');
-    const headers = new HttpHeaders({ Authorization: `Bearer ${token}` });
-    return this.http.post(`${this.resetUrl}/api/v1/reports/reply/${reportId}/`, { message }, { headers });
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${token}`
+    });
+
+    return this.http.post(
+      `${this.resetUrl}/v1/reports/${reportId}/reply/`,
+      { message },
+      { headers }
+    );
   }
 
   deleteReport(reportId: number) {
-    return this.http.delete(`${this.resetUrl}/api/v1/delete-report/${reportId}/`);
+    return this.http.delete(`${this.resetUrl}/v1/delete-report/${reportId}/`);
   }
 
     sendReply(reportId: string, message: string) {
-    return this.http.post(`${this.resetUrl}/api/reports/reply/`, {
+    return this.http.post(`${this.resetUrl}/reports/reply/`, {
       report_id: reportId,
       message: message
     });
   }
 
   deleteBooking(bookingId: number) {
-    return this.http.delete(`${this.resetUrl}/api/v1/bookings/${bookingId}/delete/`);
+    return this.http.delete(`${this.resetUrl}/v1/bookings/${bookingId}/delete/`);
   }
 
   acceptNewBooking(bookingId: number): Observable<any> {
-    const url = `${this.resetUrl}/api/v1/bookings/${bookingId}/accept/`;
+    const url = `${this.resetUrl}/v1/bookings/${bookingId}/accept/`;
     return this.http.post(url, {});
   }
 
   getUserBookingStats(): Observable<any> {
-  return this.http.get(`${this.resetUrl}/api/v1/user-booking-stats/`);
+  return this.http.get(`${this.resetUrl}/v1/user-booking-stats/`);
 }
 
 sendNotificationToAllWardExecutives(message: string) {
-  return this.http.post(`${this.resetUrl}/api/v1/notify-ward-executives/`, { message})
+  return this.http.post(`${this.resetUrl}/v1/notify-ward-executives/`, { message})
 }
 
 sendNotificationToWardExecutive(email: string, message: string) {
-  return this.http.post(`${this.resetUrl}/api/v1/notify-single-ward-executive/`, { email, message });
+  return this.http.post(`${this.resetUrl}/v1/notify-single-ward-executive/`, { email, message });
 }
 
   getAllMyHistoryReporting(): Observable<any> {
-    return this.http.get(`${this.resetUrl}/api/v1/user-reports/`);
+    return this.http.get(`${this.resetUrl}/v1/user-reports/`);
   }
 
   deleteMyBooking(id: number): Observable<any> {
-    return this.http.delete(`${this.resetUrl}/api/v1/delete-booking/${id}/`);
+    return this.http.delete(`${this.resetUrl}/v1/delete-booking/${id}/`);
   }
 
   sendNotification(userId: number, message: string): Observable<any> {
-    return this.http.post(`${this.resetUrl}/api/v1/send-notification/`, {
+    return this.http.post(`${this.resetUrl}/v1/send-notification/`, {
       user_id: userId,
       message: message
     },
@@ -179,7 +194,7 @@ sendNotificationToWardExecutive(email: string, message: string) {
   }
 
   getUnreadCount(): Observable<number> {
-  return this.http.get<{ unread_count: number }>(`${this.resetUrl}/api/v1/notifications/unread-count/`)
+  return this.http.get<{ unread_count: number }>(`${this.resetUrl}/v1/notifications/unread-count/`)
     .pipe(
       map(response => response.unread_count || 0)
     );
@@ -198,10 +213,10 @@ forwardReportToAdmin(forwardId: number, message: string = ''): Observable<any> {
   console.log('Forwarding report to admin...');
   console.log('Forward ID:', forwardId);
   console.log('Payload:', payload);
-  console.log('POST URL:', `${this.resetUrl}/api/v1/reports/${forwardId}/forward-to-admin/`);
+  console.log('POST URL:', `${this.resetUrl}/v1/reports/${forwardId}/forward-to-admin/`);
 
   return this.http.post(
-    `${this.resetUrl}/api/v1/reports/${forwardId}/forward-to-admin/`,
+    `${this.resetUrl}/v1/reports/${forwardId}/forward-to-admin/`,
     { message },
     { headers }
   ).pipe(

@@ -90,27 +90,10 @@
 
     <div class="table-container">
       <table mat-table [dataSource]="dataSource" matSort class="modern-table" @tableEnterAnimation>
-
-        <!-- ID Column -->
-        <ng-container matColumnDef="id">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header>
-            <div class="header-cell">
-              <mat-icon>tag</mat-icon>
-              <span>ID</span>
-            </div>
-          </th>
-          <td mat-cell *matCellDef="let report">
-            <div class="cell-content">
-              <div class="primary-text">{{ report.id }}</div>
-            </div>
-          </td>
-        </ng-container>
-
         <!-- Report ID Column -->
         <ng-container matColumnDef="report_id">
           <th mat-header-cell *matHeaderCellDef mat-sort-header>
             <div class="header-cell">
-              <mat-icon>tag</mat-icon>
               <span>Report ID</span>
             </div>
           </th>
@@ -126,7 +109,7 @@
         <ng-container matColumnDef="space_name">
           <th mat-header-cell *matHeaderCellDef mat-sort-header>
             <div class="header-cell">
-              <mat-icon>landscape</mat-icon>
+           
               <span>Open Space</span>
             </div>
           </th>
@@ -142,14 +125,12 @@
         <ng-container matColumnDef="location">
           <th mat-header-cell *matHeaderCellDef mat-sort-header>
             <div class="header-cell">
-              <mat-icon>place</mat-icon>
               <span>Location</span>
             </div>
           </th>
           <td mat-cell *matCellDef="let report">
             <div class="location-cell">
               <div class="location-item">
-                <mat-icon class="location-icon">location_city</mat-icon>
                 <span class="location-text">{{ report.district }}</span>
               </div>
               <div class="location-item">
@@ -164,15 +145,11 @@
         <ng-container matColumnDef="from_user">
           <th mat-header-cell *matHeaderCellDef mat-sort-header>
             <div class="header-cell">
-              <mat-icon>person</mat-icon>
               <span>Submitted By</span>
             </div>
           </th>
           <td mat-cell *matCellDef="let report">
             <div class="submitter-cell">
-              <div class="submitter-avatar">
-                <mat-icon>account_circle</mat-icon>
-              </div>
               <div class="submitter-info">
                 <div class="primary-text">{{ report.from_user }}</div>
                 <div class="secondary-text">Ward Executive</div>
@@ -185,14 +162,13 @@
         <ng-container matColumnDef="status">
           <th mat-header-cell *matHeaderCellDef>
             <div class="header-cell">
-              <mat-icon>info</mat-icon>
               <span>Status</span>
             </div>
           </th>
           <td mat-cell *matCellDef="let report">
             <div class="status-badge pending">
               <mat-icon>schedule</mat-icon>
-              <span>Pending Review</span>
+              <span>Pending</span>
             </div>
           </td>
         </ng-container>

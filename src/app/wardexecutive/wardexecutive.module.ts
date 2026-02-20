@@ -1,7 +1,7 @@
 import { WardSidebarComponent } from './ward-sidebar/ward-sidebar.component';
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { WardexecutiveRoutingModule } from './wardexecutive-routing.module';
 import { WarddashboardComponent } from './warddashboard/warddashboard.component';
 import { WardCustomersidebarComponent } from './ward-customersidebar/ward-customersidebar.component';
@@ -16,7 +16,7 @@ import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatTableModule } from '@angular/material/table';
-
+import { SafeHtmlPipe } from '../pipes/pipes/safe-html.pipe';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
@@ -37,6 +37,8 @@ import { NotifyAllComponent } from './notify-all/notify-all.component';
 import { NotifySingleComponent } from './notify-single/notify-single.component';
 import { AvailableReportComponent } from './available-report/available-report.component';
 import { WardReplayComponent } from './ward-replay/ward-replay.component';
+import { WardDialogComponent } from './ward-dialog/ward-dialog.component';
+import { WardmapDirectionComponent } from './wardmap-direction/wardmap-direction.component';
 
 @NgModule({
   declarations: [
@@ -52,6 +54,9 @@ import { WardReplayComponent } from './ward-replay/ward-replay.component';
     NotifySingleComponent,
     AvailableReportComponent,
     WardReplayComponent,
+    WardDialogComponent,
+    WardmapDirectionComponent,
+    SafeHtmlPipe
   ],
   imports: [
     CommonModule,
@@ -79,6 +84,7 @@ import { WardReplayComponent } from './ward-replay/ward-replay.component';
     MatTableModule,
     UserModule,
     SharingModule,
+    MatTooltipModule
   ],
   exports: [WardSidebarComponent]
 })

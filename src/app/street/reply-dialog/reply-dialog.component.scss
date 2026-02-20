@@ -1,0 +1,67 @@
+.reply-dialog-container {
+  background: #ffffff;
+  padding: 20px;
+  border-radius: 16px;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.12);
+  border: 1px solid #e5e7eb;
+  animation: fadeIn 0.25s ease-out;
+}
+
+.dialog-title {
+  font-size: 20px;
+  font-weight: 600;
+  color: #374151;
+  text-align: center;
+  margin-bottom: 12px;
+}
+
+.form-area {
+  margin-top: 15px;
+}
+
+.full-width {
+  width: 100%;
+}
+
+textarea {
+  min-height: 100px !important;
+}
+
+.dialog-actions {
+  margin-top: 20px;
+  padding-top: 10px;
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+}
+
+.cancel-btn {
+  border-radius: 8px !important;
+  padding: 5px 18px !important;
+  font-weight: 500;
+}
+
+.send-btn {
+  background: rgb(100, 100, 177) !important;
+  color: #fff !important;
+  border-radius: 8px !important;
+  padding: 6px 22px !important;
+  font-weight: 600;
+  box-shadow: 0 4px 10px rgba(100, 100, 177, 0.3);
+
+  &:hover {
+    box-shadow: 0 6px 14px rgba(100, 100, 177, 0.45);
+  }
+}
+
+/* Smooth fade-in animation */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

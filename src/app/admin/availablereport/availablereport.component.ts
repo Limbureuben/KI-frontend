@@ -35,7 +35,7 @@ import { ReplyComponent } from '../reply/reply.component';
 })
 export class AvailablereportComponent implements OnInit{
   dataSource = new MatTableDataSource<any>([]);
-  displayedColumns: string[] = ['id', 'report_id', 'space_name', 'location', 'from_user', 'status', 'actions'];
+  displayedColumns: string[] = [ 'report_id', 'space_name', 'location', 'from_user', 'status', 'actions'];
   originalData: any[] = [];
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;

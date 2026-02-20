@@ -46,7 +46,7 @@ export class AvailableBookingComponent implements OnInit{
 
   selectedReport: any = null;
   showPopup: boolean = false;
-  backendUrl = 'http://localhost:8000';
+  backendUrl = 'http://95.111.247.129';
 
   constructor(
     private bookingService: BookingService,
@@ -59,6 +59,27 @@ export class AvailableBookingComponent implements OnInit{
   ngOnInit(): void {
   this.loadBookings();
   }
+
+exportBookings() {
+  const data = this.dataSource.data.map(b => ({
+    Space: b.space_name,
+    User: b.username,
+    Status: b.status,
+    Date: b.created_at
+  }));
+
+  const csv = [
+    Object.keys(data[0]).join(','),
+    ...data.map(row => Object.values(row).join(','))
+  ].join('\n');
+
+  const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+  const link = document.createElement('a');
+  link.href = URL.createObjectURL(blob);
+  link.download = 'bookings.csv';
+  link.click();
+}
+
 
 loadBookings() {
     this.bookingService.getAdminBookingsByDistrict().subscribe((data) => {

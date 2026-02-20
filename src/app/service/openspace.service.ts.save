@@ -6,6 +6,7 @@ import { ADD_OPENSPACE, CONFIRM_REPORT, CREATE_REPORT, DELETE_OPEN_SPACE, GET_AL
 import { OpenSpaceRegisterData, ToggleOpenSpaceResponse } from '../models/openspace.model';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { environment } from '../../environments/environment';
+
 export type { OpenSpaceRegisterData, ToggleOpenSpaceResponse };
 
 
@@ -143,6 +144,26 @@ export class OpenspaceService {
   }
 
 
+  createReport(description: string, email: string | null, filePath: string | null, spaceName: string, district: string, street: string, latitude: number, longitude: number, userId: string | null): Observable<any> {
+    return this.apollo.mutate({
+      mutation: CREATE_REPORT,
+      variables: {
+        description,
+        email: email || null,
+        userId,
+        filePath: filePath || null,
+        spaceName,
+        district,
+        street,
+        latitude,
+        longitude
+      }
+    }).pipe(
+      map(result => result.data)
+    );
+  }
+
+
   getAllReports(): Observable<any[]> {
     const token = typeof localStorage !== 'undefined' ? localStorage.getItem('token') : null;
     const headers = new HttpHeaders({
@@ -211,6 +232,12 @@ export class OpenspaceService {
     }).valueChanges;
   }
 
+  getAnonymousReports(sessionId: string) {
+    return this.apollo.watchQuery({
+      query: GET_ANONYMOUS_REPORTS,
+      variables: { sessionId }
+    }).valueChanges;
+  }
 
 getMyReports(): Observable<any> {
   const token = typeof localStorage !== 'undefined' ? localStorage.getItem('success_token') : null; // Get token from storage
@@ -262,16 +289,14 @@ submitReportREST(formData: FormData): Observable<any> {
   // DEBUG: log headers for troubleshooting
   console.log('Submitting report with headers:', headers.keys());
 
-  return this.http.post(`${this.baseUrl}/reports/`, formData, { headers });
+  return this.http.post(`${this.resetUrl}/reports/`, formData, { headers });
 }
-
-
-
 
 
 
 registerWardAndStreets(wardName: string, streets: string[]): Observable<any> {
     const token = localStorage.getItem('token');
+
     const headers = new HttpHeaders({ Authorization: `Bearer ${token}` });
 
     const payload = {
@@ -279,7 +304,8 @@ registerWardAndStreets(wardName: string, streets: string[]): Observable<any> {
       streets: streets
     };
     return this.http.post(`${this.baseUrl}/streets/register/`, payload, { headers });
-  }
+
+
 
 
 
@@ -297,6 +323,17 @@ registerWard(name: string) {
   const headers = new HttpHeaders({ Authorization: `Bearer ${token}` });
   return this.http.post(`${this.baseUrl}/wards/register/`, { name }, { headers });
 }
+
+
+
+
+
+
+
+
+
+
+
 
 getWards(): Observable<any> {
     const token = localStorage.getItem('token');
@@ -321,4 +358,3 @@ getWards(): Observable<any> {
   }
 
 }
-
